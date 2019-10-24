@@ -4,3 +4,5 @@ ALTER ROLE sber SET client_encoding TO 'utf8';
 ALTER ROLE sber SET default_transaction_isolation TO 'read committed';
 ALTER ROLE sber SET timezone TO 'UTC';
 GRANT ALL PRIVILEGES ON DATABASE sber_back TO sber;
+
+gunicorn --workers 2 --bind 0.0.0.0:8000 wireless.wsgi:application
