@@ -19,6 +19,7 @@ class PointSerializer(serializers.ModelSerializer):
 class TicketSerializer(serializers.ModelSerializer):
     author = serializers.DictField(source='get_author')
     point = PointSerializer(read_only=True, many=False, source='get_point')
+    label = serializers.DictField(source='get_label')
 
     class Meta:
         model = Ticket

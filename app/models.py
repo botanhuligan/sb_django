@@ -3,7 +3,8 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.auth.models import User
 
 # Create your models here.
-
+NAME = "name"
+TITLE = "title"
 
 class Ticket(models.Model):
     TO_DO = 'to_do'
@@ -25,6 +26,7 @@ class Ticket(models.Model):
     LABEL_OTHER = 'other'
     LABEL_UNLABELED = 'unlabeled'
 
+
     LABEL_CHOICES = [
         (LABEL_NOT_SEE, 'Not Visible WiFi'),
         (LABEL_LOW_SIGNAL, 'Low Wifi Signal'),
@@ -33,6 +35,8 @@ class Ticket(models.Model):
         (LABEL_OTHER, 'Other'),
         (LABEL_UNLABELED, 'No Label')
     ]
+
+    LABELS_DICT = {k[0]:k[1] for k in LABEL_CHOICES}
 
     title = models.TextField(max_length=255, null=False, blank=False, verbose_name="Title", editable=False)
     description = models.TextField(max_length=2000, null=True, blank=False, verbose_name="Description")
@@ -57,6 +61,12 @@ class Ticket(models.Model):
 
     def get_point(self):
         return self.location_point
+
+    def get_label(self):
+        return {
+            NAME: self.label,
+            TITLE: self.LABELS_DICT[self.label]
+        }
 
 
 class Place(models.Model):
