@@ -1,14 +1,18 @@
 from django.shortcuts import render
-from rest_framework.decorators import action, permission_classes
+from rest_framework.decorators import action, api_view
+from django.contrib import auth
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import Response, status
-from app.serializers import TicketSerializer, PlaceSerializer, PointSerializer, TicketCreateSerializer
+from app.serializers import TicketSerializer, PlaceSerializer, PointSerializer, TicketCreateSerializer, \
+    TickerUpdateSerializer
+from django.views.decorators.csrf import csrf_exempt
 from app.models import Ticket, Place, Point, NAME, TITLE
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.parsers import JSONParser
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 # Create your views here.
 import logging
+from rest_framework.authtoken.models import Token
 
 
 
@@ -19,6 +23,36 @@ FAIL = 'fail'
 SUCCESS = 'success'
 
 
+@api_view(http_method_names=["GET"])
+def get_token(request, *args, **kwargs):
+    if request.user.is_authenticated:
+        return Response({}, status=status.HTTP_200_OK)
+
+
+@api_view(http_method_names=["POST"])
+def log_in(request, *args, **kwarg):
+    log.debug("log_in:")
+    # if request.user.is_authenticated:
+    #     log.debug("log_in:user is_authenticated:" + str(request.user))
+    #     return Response({"status": "already authenticated"}, status=status.HTTP_200_OK)
+    username = request.data.get("username")
+    password = request.data.get("password")
+    log.debug("log_in:username:" + str(username))
+    log.debug("log_in:password:" + str(password))
+    if not username or not password:
+        return Response({RESULT: FAIL, "error": "password and username fields required"}, status=status.HTTP_400_BAD_REQUEST)
+    user = auth.authenticate(request, username=username, password=password)
+
+    if user:
+        log.debug("log_in:user exists")
+        log.debug("log_in:user id:" + str(user.id))
+        auth.login(request, user)
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({RESULT: SUCCESS, "token": token.key}, status=status.HTTP_200_OK)
+    else:
+        return Response({RESULT: "fail! Bad auth data"}, status=status.HTTP_401_UNAUTHORIZED)
+
+
 class TicketModelViewSet(ModelViewSet):
     http_method_names = ['get', 'put', 'post']
     authentication_classes = [BasicAuthentication, SessionAuthentication]
@@ -26,7 +60,8 @@ class TicketModelViewSet(ModelViewSet):
     permission_classes = [IsAuthenticatedOrReadOnly]
     serializers = {
         'default': TicketSerializer,
-        'create': TicketCreateSerializer
+        'create': TicketCreateSerializer,
+        'update': TickerUpdateSerializer
     }
 
     def get_queryset(self):
