@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 from decouple import config
-
+import logging
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,9 +25,21 @@ SECRET_KEY = '%lv_mr6=zhta%l!k*5(ijv(=u+v5j23k^%-ow=-=b195g)qx8j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+PROJECT_NAME = 'GRAPHITTI'
+
+if DEBUG:
+    level = "DEBUG"
+else:
+    level = "INFO"
+logging.basicConfig(
+    format='%(levelname)s: [%(asctime)s.%(msecs)03d] {} %(name)s '
+ '%(filename)s:%(funcName)s:%(lineno)s: %(message)s'.format(PROJECT_NAME),
+ datefmt='%Y-%m-%d %H:%M:%S', level=level)
+
+log = logging.getLogger("SETTINGS")
 
 ALLOWED_HOSTS = ["*"]
-
+log.info("ALLOWED_HOSTS: " + str(ALLOWED_HOSTS))
 
 # Application definition
 
@@ -77,7 +89,6 @@ WSGI_APPLICATION = 'wireless.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
-#config('SEM_PORT', default=9898, cast=int)
 
 DATABASES = {
     'default': {
@@ -90,6 +101,7 @@ DATABASES = {
     }
 }
 
+log.info("DATABASES: " + str(DATABASES))
 
 
 # Password validation
@@ -131,6 +143,10 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 100
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.authentication.SessionAuthentication'
+    ]
 }
+
+log.info("REST_FRAMEWORK: " + str(REST_FRAMEWORK))
