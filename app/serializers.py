@@ -23,12 +23,19 @@ class TicketSerializer(serializers.ModelSerializer):
     author = serializers.DictField(source='get_author')
     point = PointSerializer(read_only=True, many=False, source='get_point')
     label = serializers.DictField(source='get_label')
+    status = serializers.DictField(source='get_status')
     timestamp = serializers.IntegerField(source='get_timestamp')
 
     class Meta:
         model = Ticket
         fields = ["id", "title", "description", "date_time", "point", "timestamp",
                   "speed_test", "wifi_points", "status", "label", "author"]
+
+
+class TickerUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ["label", "status", "description"]
 
 
 class TicketCreateSerializer(serializers.ModelSerializer):

@@ -22,6 +22,8 @@ class Ticket(models.Model):
         (DROP, 'Drop'),
     ]
 
+    STATUS_DICT = {k[0]:k[1] for k in STATUS_CHOICES}
+
     LABEL_NOT_SEE = 'not_see'
     LABEL_LOW_SIGNAL = 'low_signal'
     LABEL_NOISE = 'noise'
@@ -80,6 +82,12 @@ class Ticket(models.Model):
         return {
             NAME: self.label,
             TITLE: self.LABELS_DICT[self.label]
+        }
+
+    def get_status(self):
+        return {
+            NAME: self.status,
+            TITLE: self.STATUS_DICT[self.status]
         }
 
     def get_timestamp(self):
