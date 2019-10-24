@@ -26,8 +26,8 @@ router.register(r'point', PointModelViewSet, 'point')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/login/', log_in),
+    path('api/device/', get_device_info),
     path('api/', include(router.urls)),
-    path('login/', log_in),
-    path('device/', get_device_info)
     # path('doc/', include('rest_framework.urls')),
 ]
