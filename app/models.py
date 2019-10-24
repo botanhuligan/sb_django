@@ -3,6 +3,8 @@ from django.contrib.postgres.fields import JSONField
 from django.contrib.auth.models import User
 
 # Create your models here.
+NAME = "name"
+TITLE = "title"
 
 class Ticket(models.Model):
     TO_DO = 'to_do'
@@ -17,45 +19,73 @@ class Ticket(models.Model):
         (DROP, 'Drop'),
     ]
 
-    title = models.TextField(max_length=255, null=False, blank=False, verbose_name="Description")
-    description = models.TextField(max_length=2000, null=True, blank=False)
-    point = models.ForeignKey('Point', null=True, blank=True, on_delete=models.CASCADE)
-    speed_test = JSONField(blank=True, null=True)
-    load_test = JSONField(blank=True, null=True)
-    points = JSONField(blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
-    status = models.CharField(choices=STATUS_CHOICES, default=TO_DO, max_length=10)
+    LABEL_NOT_SEE = 'not_see'
+    LABEL_LOW_SIGNAL = 'low_signal'
+    LABEL_NOISE = 'noise'
+    LABEL_LOST_TRAFFIC = 'lost_traffic'
+    LABEL_OTHER = 'other'
+    LABEL_UNLABELED = 'unlabeled'
+
+
+    LABEL_CHOICES = [
+        (LABEL_NOT_SEE, 'Not Visible WiFi'),
+        (LABEL_LOW_SIGNAL, 'Low Wifi Signal'),
+        (LABEL_NOISE, 'Noisy Channels'),
+        (LABEL_LOST_TRAFFIC, 'Package Lost'),
+        (LABEL_OTHER, 'Other'),
+        (LABEL_UNLABELED, 'No Label')
+    ]
+
+    LABELS_DICT = {k[0]:k[1] for k in LABEL_CHOICES}
+
+    title = models.TextField(max_length=255, null=False, blank=False, verbose_name="Title", editable=False)
+    description = models.TextField(max_length=2000, null=True, blank=False, verbose_name="Description")
+    date_time = models.DateTimeField(auto_now=True, auto_created=True, editable=False)
+    location_point = models.ForeignKey('Point', null=True, blank=True, on_delete=models.CASCADE, verbose_name="Map Point")
+    speed_test = JSONField(blank=True, null=True, verbose_name="Speed Test")
+    wifi_points = JSONField(blank=True, null=True, verbose_name="Wifi Points List")
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name="User", editable=False)
+    status = models.CharField(choices=STATUS_CHOICES, default=TO_DO, max_length=10, verbose_name="Ticker Status")
+    label = models.CharField(choices=LABEL_CHOICES, default=LABEL_UNLABELED, max_length=20, verbose_name="Description")
 
     def __str__(self):
         return str(self.id) + ":[" + self.title + "]"
 
+    def get_author(self):
+        return {
+          "first_name": self.user.first_name,
+          "last_name": self.user.last_name,
+          "group": self.user.groups.name,
+          "email": self.user.email
+        }
 
-# class WifiPoint(models.Model):
-#     ssid = models.CharField(max_length=255, null=False, blank=True, default="Unknown")
-#     bssid = models.CharField(max_length=20, null=True, blank=True, default="00:00:00:00:00:00")
-#     rssi = models.IntegerField(null=True, blank=True)
-#     connected = models.BooleanField(null=False, blank=False, default=False)
-#     topologyMode = models.TextField(max_length=255, null=True, blank=True)
-#     availableWps = models.BooleanField(null=True, blank=True, default=False)
-#     isVisible = models.BooleanField(null=True, blank=True, default=False)
-#     frequency = models.IntegerField(null=True, blank=True, default=0)
-#     channel = models.IntegerField(null=False, blank=False)
+    def get_point(self):
+        return self.location_point
+
+    def get_label(self):
+        return {
+            NAME: self.label,
+            TITLE: self.LABELS_DICT[self.label]
+        }
 
 
 class Place(models.Model):
-    img = models.ImageField(blank=False, null=False)
-    city = models.CharField(max_length=50, null=False)
-    address = models.TextField(blank=True, null=True, max_length=255)
-    floor = models.IntegerField(blank=True, null=True)
+    img = models.ImageField(blank=False, null=False, verbose_name="Image")
+    city = models.CharField(max_length=50, null=False, verbose_name="City")
+    address = models.TextField(blank=True, null=True, max_length=255, verbose_name="Address")
+    floor = models.IntegerField(blank=True, null=True, verbose_name="Floor")
 
     def __str__(self):
         return str(self.id) + ":[" + self.city + ":" + self.address + ":" + str(self.floor) + "]"
 
 
 class Point(models.Model):
-    x = models.FloatField(blank=True, null=True)
-    y = models.FloatField(blank=True, null=True)
-    place = models.ForeignKey('Place', blank=False, null=False, on_delete=models.CASCADE)
+    x = models.FloatField(blank=True, null=True, verbose_name="X position")
+    y = models.FloatField(blank=True, null=True, verbose_name="Y Position")
+    place = models.ForeignKey('Place', blank=False, null=False, on_delete=models.CASCADE, verbose_name="Location")
 
     def __str__(self):
         return str(self.id) + ":[" + str(self.place) + "|x:" + str(self.x) + "; y:" + str(self.y) + "]"
+
+    def get_location(self):
+        return self.place

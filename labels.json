@@ -1,0 +1,22 @@
+{
+  "label_list": [
+    {
+      "not_see": "Not Visible WiFi"
+    },
+    {
+      "low_signal": "Low Wifi Signal"
+    },
+    {
+      "noise": "Noisy Channels"
+    },
+    {
+      "lost_traffic": "Package Lost"
+    },
+    {
+      "other": "Other"
+    },
+    {
+      "unlabeled": "No Label"
+    }
+  ]
+}

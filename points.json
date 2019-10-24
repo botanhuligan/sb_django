@@ -1,0 +1,36 @@
+{
+    "points": [
+      {
+        "ssid": "FIKSIKI_5G",
+        "bssid": "28:6c:07:44:30:c9",
+        "rssi": -34.0,
+        "connected": false,
+        "capabilities": [
+          {
+            "authScheme": "WPA",
+            "keyManagementAlgorithm": "PSK",
+            "cipherMethod": "TKIP"
+          },
+          {
+            "authScheme": "WPA",
+            "keyManagementAlgorithm": "PSK",
+            "cipherMethod": "CCMP"
+          },
+          {
+            "authScheme": "WPA",
+            "keyManagementAlgorithm": "PSK",
+            "cipherMethod": "TKIP"
+          },
+          {
+            "authScheme": "WPA2",
+            "keyManagementAlgorithm": "PSK",
+            "cipherMethod": "CCMP"
+          }
+        ],
+        "topologyMode": "ESS",
+        "availableWps": true,
+        "isVisible": true,
+        "frequency": 5805
+      }
+    ]
+}
