@@ -149,4 +149,9 @@ REST_FRAMEWORK = {
     ]
 }
 
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+    '/root/sb_django/static/',
+)
+
 log.info("REST_FRAMEWORK: " + str(REST_FRAMEWORK))
