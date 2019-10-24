@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -76,12 +77,19 @@ WSGI_APPLICATION = 'wireless.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
+#config('SEM_PORT', default=9898, cast=int)
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('POSTGRES_USER', 'sber_back', cast=str),
+        'USER': config('POSTGRES_USER', 'sber', cast=str),
+        'PASSWORD': config('POSTGRES_PASSWORD', 'hfdbb73hGGh3', cast=str),
+        'HOST': config('POSTGRES_HOST', '127.0.0.1', cast=str),
+        'PORT': config('POSTGRES_PORT', '5432', cast=int),
     }
 }
+
 
 
 # Password validation
