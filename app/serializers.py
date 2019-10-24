@@ -1,18 +1,21 @@
 from rest_framework.serializers import ModelSerializer
+from app.models import Ticket, Place, Point
 
 
-class DefaultTickerSerializer(ModelSerializer):
-    pass
+class TicketSerializer(ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = "__all__"
 
 
-class DefaultAPSerializer(ModelSerializer):
-    pass
+class PlaceSerializer(ModelSerializer):
+    class Meta:
+        model = Place
+        fields = "__all__"
 
 
-class DefaultDeviceSerializer(ModelSerializer):
-    pass
-
-
-class DefaultWiFiAPSerializer(ModelSerializer):
-    pass
+class PointSerializer(ModelSerializer):
+    class Meta:
+        model = Point
+        fields = "__all__"
 
