@@ -26,7 +26,7 @@ SECRET_KEY = '%lv_mr6=zhta%l!k*5(ijv(=u+v5j23k^%-ow=-=b195g)qx8j'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["172.30.14.80"]
 
 
 # Application definition
@@ -129,3 +129,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}
