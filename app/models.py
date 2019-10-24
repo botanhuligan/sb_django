@@ -34,18 +34,29 @@ class Ticket(models.Model):
         (LABEL_UNLABELED, 'No Label')
     ]
 
-    title = models.TextField(max_length=255, null=False, blank=False, verbose_name="Title")
+    title = models.TextField(max_length=255, null=False, blank=False, verbose_name="Title", editable=False)
     description = models.TextField(max_length=2000, null=True, blank=False, verbose_name="Description")
-    point = models.ForeignKey('Point', null=True, blank=True, on_delete=models.CASCADE, verbose_name="Map Point")
+    date_time = models.DateTimeField(auto_now=True, auto_created=True, editable=False)
+    location_point = models.ForeignKey('Point', null=True, blank=True, on_delete=models.CASCADE, verbose_name="Map Point")
     speed_test = JSONField(blank=True, null=True, verbose_name="Speed Test")
-    load_test = JSONField(blank=True, null=True, verbose_name="Load Tests")
-    points = JSONField(blank=True, null=True, verbose_name="Wifi Points List")
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name="User")
+    wifi_points = JSONField(blank=True, null=True, verbose_name="Wifi Points List")
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name="User", editable=False)
     status = models.CharField(choices=STATUS_CHOICES, default=TO_DO, max_length=10, verbose_name="Ticker Status")
     label = models.CharField(choices=LABEL_CHOICES, default=LABEL_UNLABELED, max_length=20, verbose_name="Description")
 
     def __str__(self):
         return str(self.id) + ":[" + self.title + "]"
+
+    def get_author(self):
+        return {
+          "first_name": self.user.first_name,
+          "last_name": self.user.last_name,
+          "group": self.user.groups.name,
+          "email": self.user.email
+        }
+
+    def get_point(self):
+        return self.location_point
 
 
 class Place(models.Model):
@@ -65,3 +76,6 @@ class Point(models.Model):
 
     def __str__(self):
         return str(self.id) + ":[" + str(self.place) + "|x:" + str(self.x) + "; y:" + str(self.y) + "]"
+
+    def get_location(self):
+        return self.place
