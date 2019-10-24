@@ -13,7 +13,7 @@ from rest_framework.authentication import BasicAuthentication, SessionAuthentica
 # Create your views here.
 import logging
 from rest_framework.authtoken.models import Token
-
+from app.utils import get_data_by_mac
 
 
 log = logging.getLogger(__name__)
@@ -27,6 +27,19 @@ SUCCESS = 'success'
 def get_token(request, *args, **kwargs):
     if request.user.is_authenticated:
         return Response({}, status=status.HTTP_200_OK)
+
+
+@api_view(http_method_names=["POST"])
+def get_device_info(request, *args, **kwargs):
+    mac = request.data.get("mac")
+    if not mac:
+        return Response({RESULT: FAIL, MESSAGE: "mac address required!"}, status=status.HTTP_400_BAD_REQUEST)
+    data = get_data_by_mac(mac)
+    print("data: ", data)
+    if not data:
+        return Response({RESULT: FAIL, MESSAGE: "Device not found"}, status=status.HTTP_204_NO_CONTENT)
+    return Response(data, status=status.HTTP_200_OK)
+
 
 
 @api_view(http_method_names=["POST"])

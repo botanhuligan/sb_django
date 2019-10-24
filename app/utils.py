@@ -18,4 +18,5 @@ def get_data_by_mac(mac):
 if __name__ == "__main__":
     import uuid
     mac = ':'.join(['{:02x}'.format((uuid.getnode() >> ele) & 0xff )for ele in range(0,8*6,8)][::-1])
+    print("mac: ", mac)
     print(get_data_by_mac(mac))
