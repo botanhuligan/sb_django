@@ -43,7 +43,7 @@ class Ticket(models.Model):
 
     LABELS_DICT = {k[0]:k[1] for k in LABEL_CHOICES}
 
-    title = models.TextField(max_length=255, null=False, blank=False, verbose_name="Title")
+    title = models.TextField(max_length=255, null=False, blank=False, verbose_name="Title", default="Empty Tittle")
     description = models.TextField(max_length=2000, null=True, blank=False, verbose_name="Description")
     date_time = models.DateTimeField(auto_now=True, auto_created=True, editable=False)
     location_point = models.ForeignKey('Point', null=True, blank=True, on_delete=models.CASCADE, verbose_name= "Map Point")
