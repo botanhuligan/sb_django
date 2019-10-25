@@ -56,6 +56,7 @@ def log_in(request, *args, **kwarg):
         return Response({RESULT: FAIL, "error": "password and username fields required"}, status=status.HTTP_400_BAD_REQUEST)
     user = auth.authenticate(request, username=username, password=password)
 
+
     if user:
         log.debug("log_in:user exists")
         log.debug("log_in:user id:" + str(user.id))
@@ -103,6 +104,18 @@ class TicketModelViewSet(ModelViewSet):
         validated_data["user"] = request.user
         obj = serializer.create(validated_data)
         return Response({"id": obj.id}, status=status.HTTP_200_OK)
+
+    @action(methods=['post'], detail=False, url_path='search')
+    def search(self, request, *args, **kwargs):
+        log.debug("TicketModelViewSet:search")
+        query = request.data.get("query", None)
+        if not query:
+            return Response({RESULT: FAIL, MESSAGE: "query field required"}, status=status.HTTP_400_BAD_REQUEST)
+        objects = Ticket.objects.filter(description__contains=query)
+        if not objects:
+            return Response({RESULT: FAIL, MESSAGE: "No tickets found"}, status=status.HTTP_204_NO_CONTENT)
+        serializer = self.get_serializer(objects, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PlaceModelViewSet(ModelViewSet):
